@@ -144,4 +144,20 @@ Time-series forecasting models are exceptionally vulnerable to subtle data leaka
   - Unit clarity banner: hourly average power (kW) vs electrical energy (kWh).
 - [x] Comprehensive test coverage in `tests/test_insights.py` and `tests/test_app.py` via `streamlit.testing.v1.AppTest` verifying zero exceptions across all 5 navigation tabs.
 
-### Phase 4: End-to-End Verification & Integration (Next)
+### Phase 4: End-to-End Verification & Integration (Completed)
+- [x] Full Pytest suite verification: 24 tests passing across data loader, models, feature leakage, insights, and Streamlit AppTest.
+- [x] Three data mode tests:
+  - (a) Real UCI data in `data/` (verified 34,190 hourly kW observations).
+  - (b) Compatible custom CSV upload with Date+Time or single datetime column.
+  - (c) Synthetic Demo Mode fallback with prominent warning banner.
+- [x] Failure cases verification: empty file (0 bytes), missing required columns, and malformed CSV syntax handled gracefully via `st.error` without application crash.
+- [x] End-to-end verification:
+  - Forecast timestamps start strictly 1h after the last observation.
+  - UI metrics equal backend evaluation metrics from `models.evaluate`.
+  - Best-model label matches lower RMSE.
+  - PeakWatch peak equals forecast maximum.
+  - Threshold slider does not retrigger model training (sub-millisecond cache execution).
+- [x] Zero-leakage verification: features at $t$ strictly invariant to alterations at $\ge t$.
+- [x] Performance optimization: hourly series cached to `data/hourly.parquet`, reducing reload latency from ~3.1s to < 0.1s.
+
+### Phase 5: Final Documentation & Presentation Polish (Next)

@@ -264,6 +264,20 @@ def get_data(
         Tuple of (pd.Series named 'kw', source_label string).
     """
     target_path = Path(path) if path is not None else Path(default_uci_path)
+    cache_path = target_path.parent / "hourly.parquet"
+
+    # Fast path: check for cached processed hourly series
+    if path is None and cache_path.exists() and target_path.exists():
+        try:
+            if cache_path.stat().st_mtime >= target_path.stat().st_mtime:
+                cached_df = pd.read_parquet(cache_path)
+                if "kw" in cached_df.columns:
+                    cached_series = cached_df["kw"]
+                    cached_series.attrs["source"] = "UCI Household Power Consumption"
+                    cached_series.attrs["is_synthetic"] = False
+                    return cached_series, "UCI Household Power Consumption"
+        except Exception:
+            pass
 
     if target_path.exists() and target_path.is_file():
         try:
@@ -272,6 +286,12 @@ def get_data(
             if not clean_series.empty:
                 clean_series.attrs["source"] = "UCI Household Power Consumption"
                 clean_series.attrs["is_synthetic"] = False
+                # Cache processed series to disk for instant subsequent startups
+                try:
+                    if path is None:
+                        clean_series.to_frame("kw").to_parquet(cache_path)
+                except Exception:
+                    pass
                 return clean_series, "UCI Household Power Consumption"
         except Exception:
             # Fall back to synthetic data if reading fails

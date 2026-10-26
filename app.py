@@ -14,7 +14,13 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from src.data_loader import data_summary, get_data
+from src.data_loader import (
+    clean_and_resample,
+    data_summary,
+    generate_synthetic,
+    get_data,
+    load_raw,
+)
 from src.features import build_features
 from src.insights import (
     data_driven_observations,
@@ -671,17 +677,63 @@ def render_pattern_lens_tab(hp: pd.Series, wp: pd.Series, top_h: pd.DataFrame, o
 
 
 def main():
+    # Sidebar setup
+    st.sidebar.title("⚡ WATTWISE")
+    data_source_mode = st.sidebar.selectbox(
+        "Data Source Mode:",
+        ["Auto (UCI Dataset / Fallback)", "Upload Custom CSV / TXT", "Synthetic Demo"],
+        index=0,
+        help="Select real data, custom file, or synthetic demonstration data.",
+    )
+
+    series = None
+    source_label = ""
+
     try:
-        series, source_label = load_cached_dataset()
+        if data_source_mode == "Auto (UCI Dataset / Fallback)":
+            series, source_label = load_cached_dataset()
+        elif data_source_mode == "Synthetic Demo":
+            series = generate_synthetic(days=365)
+            source_label = "SYNTHETIC DEMO"
+        elif data_source_mode == "Upload Custom CSV / TXT":
+            uploaded_file = st.sidebar.file_uploader(
+                "Upload Electricity Dataset (CSV / TXT):",
+                type=["csv", "txt"],
+                help="File must contain Date + Time or datetime, plus Global_active_power.",
+            )
+            if uploaded_file is None:
+                st.info("📂 **Please upload a dataset file in the sidebar to proceed.**\n\nExpected columns: `Date` and `Time` (or `datetime`) and `Global_active_power`.")
+                return
+            
+            # Read uploaded file buffer
+            if uploaded_file.size == 0:
+                st.error("❌ **Invalid Dataset:** The uploaded file is completely empty (0 bytes).")
+                return
+
+            try:
+                # Save uploaded file temporarily to process through load_raw
+                temp_upload_path = Path("data") / f"temp_upload_{uploaded_file.name}"
+                temp_upload_path.write_bytes(uploaded_file.getbuffer())
+                raw_df = load_raw(temp_upload_path)
+                series = clean_and_resample(raw_df)
+                if temp_upload_path.exists():
+                    temp_upload_path.unlink()
+                
+                if series.empty:
+                    st.error("❌ **Invalid Dataset:** No valid non-negative readings found after cleaning and resampling.")
+                    return
+                source_label = f"Uploaded File: {uploaded_file.name}"
+            except Exception as read_err:
+                st.error(f"❌ **Invalid Dataset Error:** {read_err}")
+                return
+
     except Exception as exc:
         st.error(
             f"❌ **Failed to load WATTWISE dataset:** {exc}\n\n"
-            "Please check that 'data/household_power_consumption.txt' exists or run 'python scripts/download_uci.py'."
+            "Please check file format or select 'Synthetic Demo' from the sidebar."
         )
         return
 
-    # Sidebar setup
-    st.sidebar.title("⚡ WATTWISE")
     st.sidebar.markdown(f"**Data Source:** `{source_label}`")
 
     # Synthetic Demo Mode Warning on every page if running in fallback mode
