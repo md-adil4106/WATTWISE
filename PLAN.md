@@ -129,18 +129,19 @@ Time-series forecasting models are exceptionally vulnerable to subtle data leaka
 - [x] Add comprehensive tests in `tests/test_models.py` verifying no leakage, chronological split, 24-step recursive forecast shape, known metrics, and seasonal naive lag equivalence.
 - [x] Verified on real UCI dataset (Random Forest achieved MAE 0.3305 kW, RMSE 0.4827 kW vs. Baseline MAE 0.5361 kW, RMSE 0.7905 kW).
 
-### Phase 3: Dashboard Integration & Analytics Insights (Next)
+### Phase 3: Dashboard Integration & Analytics Insights (Completed)
+- [x] Implement `src/insights.py`:
+  - `peak_summary(forecast_df, threshold)`: flags exceeding hours, identifies peak time and load, and outputs status.
+  - `hourly_profile(series)`: 24-hour diurnal average load profile.
+  - `weekday_profile(series)`: weekly Monday–Sunday average load dynamics.
+  - `top_hours(series, n=3)`: ranked top peak load hours.
+  - `data_driven_observations(series)`: 3 data-driven observations computed dynamically from time-series observations.
+- [x] Build Streamlit dashboard in `app.py`:
+  - Visual Theme: dark charcoal (`#0F1412`), teal (`#14B8A6`), lime (`#A3E635`), rounded cards, `.streamlit/config.toml`.
+  - Caching: `@st.cache_data` and `@st.cache_resource` for zero retraining on UI interactions or page navigation.
+  - Sidebar Navigation: Overview, Forecast, PeakWatch, Model Arena, Pattern Lens.
+  - Synthetic Demo warning banner when real dataset is not detected.
+  - Unit clarity banner: hourly average power (kW) vs electrical energy (kWh).
+- [x] Comprehensive test coverage in `tests/test_insights.py` and `tests/test_app.py` via `streamlit.testing.v1.AppTest` verifying zero exceptions across all 5 navigation tabs.
 
-### Phase 4: Insights Engine
-- [ ] Implement `src/insights.py` functions:
-  - Peak demand hour detection and weekday vs. weekend profile comparison.
-  - Anomaly and consumption spike detection using moving IQR / Z-score.
-  - Plain-English actionable recommendations for peak shaving and load shifting.
-
-### Phase 5: Streamlit Dashboard UI & Delivery
-- [ ] Implement `app.py` UI sections:
-  - Sidebar: Data source selector, forecast horizon slider, model selector.
-  - Tab 1: Historical Consumption & Pattern Analysis (Plotly interactive charts).
-  - Tab 2: Forecast vs. Actual & Evaluation Metrics (KPI cards, comparison plots).
-  - Tab 3: Operational Insights & Anomaly Alerts.
-- [ ] End-to-end verification and demonstration readiness for presentation.
+### Phase 4: End-to-End Verification & Integration (Next)

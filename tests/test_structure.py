@@ -17,9 +17,19 @@ def test_modules_importable():
         assert mod is not None
 
 
-def test_stubs_raise_not_implemented():
-    """Verify that future phase stub functions raise NotImplementedError as expected before implementation."""
-    from src.insights import compute_peak_hours
-    import pandas as pd
-    with pytest.raises(NotImplementedError):
-        compute_peak_hours(pd.DataFrame())
+def test_core_module_callables():
+    """Verify that all core Phase 1-3 functions are callable across modules."""
+    from src.data_loader import get_data, load_raw
+    from src.features import build_features, make_row
+    from src.models import chrono_split, evaluate, forecast_next_24
+    from src.insights import hourly_profile, peak_summary
+
+    assert callable(load_raw)
+    assert callable(get_data)
+    assert callable(build_features)
+    assert callable(make_row)
+    assert callable(chrono_split)
+    assert callable(evaluate)
+    assert callable(forecast_next_24)
+    assert callable(hourly_profile)
+    assert callable(peak_summary)
