@@ -1,8 +1,7 @@
-"""WATTWISE - Electricity Demand Forecasting Dashboard.
+"""WATTWISE - Electricity Demand Forecasting & Telemetry Dashboard.
 
 Tagline: Predict Demand. Understand Patterns. Stay Ahead.
-Interactive Streamlit application for time-series analytics, load forecasting,
-peak demand monitoring, and model evaluation.
+Professional high-contrast operational analytics and load forecasting interface.
 """
 
 from datetime import datetime
@@ -31,140 +30,210 @@ from src.insights import (
 )
 from src.models import evaluate, forecast_next_24
 
-# Page configuration
+# Page configuration (No emojis, simple and clean)
 st.set_page_config(
-    page_title="WATTWISE | Electricity Demand Forecaster",
-    page_icon="⚡",
+    page_title="WATTWISE | Telemetry Load Forecaster",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# Custom CSS for Modern Glassmorphism, Dark Charcoal (#0F1412), Teal (#14B8A6), and Lime (#A3E635) styling
+# Professional Telemetry & Command Center CSS (inspired by motorsport & grid telemetry consoles)
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
-    /* Global application canvas */
+    /* Global application canvas: Deep matte obsidian */
     .stApp {
-        background: radial-gradient(circle at 12% 10%, #151f1a 0%, #0F1412 50%, #090e0c 100%);
-        color: #F3F4F6;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #08090B !important;
+        color: #F4F4F5;
+        font-family: 'Inter', sans-serif;
     }
     
-    /* Glassmorphic Metric Cards */
+    /* Typography Overrides */
+    h1, h2, h3, h4 {
+        font-family: 'Rajdhani', sans-serif !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.04em !important;
+        text-transform: uppercase !important;
+    }
+    
+    /* Telemetry Instrument Metric Cards */
     div[data-testid="stMetric"], div.css-1r6slb0, div.css-12w0qpk {
-        background: rgba(24, 34, 30, 0.72) !important;
-        backdrop-filter: blur(14px) !important;
-        -webkit-backdrop-filter: blur(14px) !important;
-        border: 1px solid rgba(20, 184, 166, 0.28) !important;
-        border-radius: 14px !important;
-        padding: 16px 20px !important;
-        box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.05) !important;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        background: #0E1217 !important;
+        border: 1px solid #1E232B !important;
+        border-top: 2px solid #14B8A6 !important;
+        border-radius: 4px !important;
+        padding: 14px 18px !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45) !important;
+        transition: border-color 0.2s ease, transform 0.2s ease !important;
     }
     
     div[data-testid="stMetric"]:hover {
-        transform: translateY(-2px);
-        border-color: rgba(20, 184, 166, 0.55) !important;
-        box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6), 0 0 16px 0 rgba(20, 184, 166, 0.2) !important;
+        border-top-color: #2DD4BF !important;
+        border-color: #2D3748 !important;
+        transform: translateY(-1px);
     }
     
-    /* Metric typography */
     div[data-testid="stMetricValue"] > div {
-        color: #14B8A6 !important;
-        font-weight: 800 !important;
-        font-size: 2.0rem !important;
+        color: #FFFFFF !important;
+        font-family: 'Rajdhani', sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 2.2rem !important;
+        letter-spacing: -0.01em !important;
         font-feature-settings: "tnum";
         font-variant-numeric: tabular-nums;
-        letter-spacing: -0.025em;
-        text-shadow: 0 0 20px rgba(20, 184, 166, 0.35);
     }
     
     div[data-testid="stMetricLabel"] > div {
-        color: #94A3B8 !important;
-        font-size: 0.82rem !important;
+        color: #71717A !important;
+        font-family: 'Rajdhani', sans-serif !important;
+        font-size: 0.8rem !important;
         font-weight: 600 !important;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
     }
     
     div[data-testid="stMetricDelta"] {
-        font-size: 0.84rem !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 0.78rem !important;
         font-weight: 500 !important;
     }
     
-    /* Frosted glass callout containers */
-    .wattwise-card {
-        background: rgba(24, 34, 30, 0.72) !important;
-        backdrop-filter: blur(14px) !important;
-        -webkit-backdrop-filter: blur(14px) !important;
-        border: 1px solid rgba(20, 184, 166, 0.28) !important;
-        border-radius: 14px !important;
-        padding: 18px 24px !important;
-        margin-bottom: 16px !important;
-        box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45) !important;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    /* Telemetry Panel Box */
+    .telemetry-card {
+        background: #0E1217 !important;
+        border: 1px solid #1E232B !important;
+        border-radius: 4px !important;
+        padding: 16px 20px !important;
+        margin-bottom: 14px !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
     }
     
-    .wattwise-card:hover {
-        border-color: rgba(20, 184, 166, 0.5) !important;
-        box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.55), 0 0 14px rgba(20, 184, 166, 0.12) !important;
+    .telemetry-card-accent {
+        border-left: 3px solid #14B8A6 !important;
     }
     
-    /* Refined pill badges with glowing accents */
-    .wattwise-badge {
+    /* Tactical Pill Badges */
+    .telemetry-pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
         background: rgba(20, 184, 166, 0.12);
         color: #14B8A6;
         border: 1px solid rgba(20, 184, 166, 0.35);
-        border-radius: 9999px;
-        padding: 4px 12px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.04em;
+        border-radius: 3px;
+        padding: 2px 8px;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        margin-bottom: 8px;
     }
     
-    .wattwise-badge-lime {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+    .telemetry-pill-active {
         background: rgba(163, 230, 53, 0.12);
         color: #A3E635;
         border: 1px solid rgba(163, 230, 53, 0.35);
-        border-radius: 9999px;
-        padding: 4px 12px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-        box-shadow: 0 0 12px rgba(163, 230, 53, 0.15);
     }
     
-    /* Sidebar glassmorphic treatment */
+    /* Pulsing status dot */
+    .pulse-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #14B8A6;
+        box-shadow: 0 0 6px #14B8A6;
+    }
+    
+    .pulse-dot-active {
+        background: #A3E635;
+        box-shadow: 0 0 6px #A3E635;
+    }
+    
+    /* Left Sidebar: Matte Cockpit Treatment */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #131B17 0%, #0B110F 100%) !important;
-        border-right: 1px solid rgba(20, 184, 166, 0.18) !important;
+        background-color: #0A0C0F !important;
+        border-right: 1px solid #181C22 !important;
     }
     
-    /* Modern radio item container */
+    section[data-testid="stSidebar"] .block-container {
+        padding-top: 1.5rem !important;
+    }
+    
+    /* Segmented Navigation Buttons (Classy full-width tactile tabs) */
     div[data-testid="stRadio"] > div {
-        background: rgba(24, 34, 30, 0.4);
-        border-radius: 12px;
-        padding: 10px 12px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        gap: 5px !important;
+        display: flex !important;
+        flex-direction: column !important;
     }
     
-    /* Dataframes & tables styling */
+    div[data-testid="stRadio"] label {
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 10px 14px !important;
+        background: #0E1217 !important;
+        border: 1px solid #1C2129 !important;
+        border-radius: 4px !important;
+        cursor: pointer !important;
+        transition: all 0.15s ease-in-out !important;
+        margin-bottom: 2px !important;
+    }
+    
+    div[data-testid="stRadio"] label:hover {
+        background: #141921 !important;
+        border-color: rgba(20, 184, 166, 0.5) !important;
+    }
+    
+    div[data-testid="stRadio"] label:hover div[data-testid="stMarkdownContainer"] p {
+        color: #14B8A6 !important;
+    }
+    
+    /* Selected navigation button */
+    div[data-testid="stRadio"] label:has(input:checked) {
+        background: linear-gradient(90deg, rgba(20, 184, 166, 0.16) 0%, rgba(20, 184, 166, 0.03) 100%) !important;
+        border-color: #14B8A6 !important;
+        border-left: 3px solid #14B8A6 !important;
+        box-shadow: 0 0 12px rgba(20, 184, 166, 0.15) !important;
+    }
+    
+    div[data-testid="stRadio"] label:has(input:checked) div[data-testid="stMarkdownContainer"] p {
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+    }
+    
+    div[data-testid="stRadio"] label div[data-testid="stMarkdownContainer"] p {
+        font-family: 'Rajdhani', sans-serif !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.08em !important;
+        text-transform: uppercase !important;
+        color: #94A3B8 !important;
+        margin: 0 !important;
+    }
+    
+    /* Hide circular native radio input */
+    div[data-testid="stRadio"] label div:first-child {
+        display: none !important;
+    }
+    
+    /* Table & Dataframe containers */
     div[data-testid="stDataFrame"] {
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid rgba(20, 184, 166, 0.2);
+        border: 1px solid #1E232B !important;
+        border-radius: 4px !important;
+    }
+    
+    /* System inputs & sliders */
+    .stSelectbox > div > div {
+        background-color: #0E1217 !important;
+        border-color: #1E232B !important;
+        border-radius: 4px !important;
+        color: #FFFFFF !important;
     }
     </style>
     """,
@@ -173,21 +242,21 @@ st.markdown(
 
 
 # Cached data loading
-@st.cache_data(show_spinner="Loading electricity consumption time series...")
+@st.cache_data(show_spinner="Loading telemetry stream...")
 def load_cached_dataset() -> Tuple[pd.Series, str]:
     """Load and clean time-series data, cached to avoid re-reading raw files."""
     return get_data()
 
 
 # Cached model evaluation (Seasonal Naive vs. Random Forest)
-@st.cache_data(show_spinner="Training forecaster & evaluating test metrics...")
+@st.cache_data(show_spinner="Computing validation metrics...")
 def get_cached_evaluation(series: pd.Series) -> Dict[str, Any]:
-    """Train models and compute test partition metrics, cached to avoid retraining on UI interactions."""
+    """Train models and compute test partition metrics, cached to avoid retraining."""
     return evaluate(series, test_frac=0.2)
 
 
 # Cached 24-hour recursive forecast
-@st.cache_resource(show_spinner="Generating 24-hour recursive forecast...")
+@st.cache_resource(show_spinner="Computing 24-hour predictive trajectory...")
 def get_cached_forecast(_model: Any, series: pd.Series) -> pd.DataFrame:
     """Generate 24-step recursive forecast using the trained model."""
     return forecast_next_24(_model, series)
@@ -205,34 +274,38 @@ def get_cached_insights(series: pd.Series) -> Tuple[pd.Series, pd.Series, pd.Dat
 
 
 def render_header(source_label: str):
-    """Render top application brand banner and unit clarity disclaimer."""
+    """Render top operational brand banner and unit clarity notice."""
     col1, col2 = st.columns([0.7, 0.3])
     with col1:
-        st.title("⚡ WATTWISE")
+        st.title("WATTWISE")
         st.markdown(
-            "#### *Predict Demand. Understand Patterns. Stay Ahead.*\n"
-            "<small style='color: #9CA3AF;'>Electricity-Demand Forecasting & Operational Analytics Dashboard</small>",
+            "<p style='color: #71717A; font-family: Rajdhani, sans-serif; font-size: 1.05rem; font-weight: 600; letter-spacing: 0.12em; margin-top: -8px; text-transform: uppercase;'>"
+            "PREDICT DEMAND // UNDERSTAND PATTERNS // STAY AHEAD"
+            "</p>",
             unsafe_allow_html=True,
         )
     with col2:
         st.markdown(
             f"""
-            <div style='text-align: right; padding-top: 10px;'>
-                <span class='wattwise-badge-lime'><span style='display:inline-block; width:6px; height:6px; border-radius:50%; background:#A3E635; box-shadow:0 0 6px #A3E635;'></span> ACTIVE TELEMETRY</span><br/>
-                <span style='color: #14B8A6; font-weight: 600; font-size: 0.95rem; letter-spacing: -0.01em;'>{source_label}</span>
+            <div style='text-align: right; padding-top: 8px;'>
+                <span class='telemetry-pill telemetry-pill-active'>
+                    <span class='pulse-dot pulse-dot-active'></span> ACTIVE TELEMETRY
+                </span><br/>
+                <span style='color: #14B8A6; font-family: JetBrains Mono, monospace; font-size: 0.85rem; font-weight: 500;'>
+                    {source_label}
+                </span>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-    # Unit note banner
-    st.caption("ℹ️ **Unit Notice:** All values represent **hourly average power (kW)**. kW measures instantaneous rate of energy flow; it is not accumulated electrical energy (kWh).")
+    st.caption("**UNIT SPECIFICATION:** All values represent **hourly average power (kW)**. kW measures instantaneous rate of energy flow; it is not accumulated electrical energy (kWh).")
     st.divider()
 
 
 def render_overview(series: pd.Series, forecast_df: pd.DataFrame, eval_res: Dict[str, Any], obs: list):
     """Render Overview tab with primary metrics, 7-day + forecast plot, and key insights."""
-    st.subheader("System Overview & Load Trajectory")
+    st.subheader("SYSTEM OVERVIEW // LOAD TRAJECTORY")
 
     latest_ts = series.index[-1]
     latest_val = float(series.iloc[-1])
@@ -244,58 +317,57 @@ def render_overview(series: pd.Series, forecast_df: pd.DataFrame, eval_res: Dict
     rf_mae = eval_res["rf_metrics"]["MAE"]
     rf_rmse = eval_res["rf_metrics"]["RMSE"]
 
-    # 4 Executive KPI Metric Cards
+    # 4 Executive Telemetry Cards
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         st.metric(
-            label="Latest Recorded Power",
+            label="LATEST RECORDED LOAD",
             value=f"{latest_val:.2f} kW",
-            delta=f"Timestamp: {latest_ts.strftime('%b %d, %H:%M')}",
+            delta=f"TIMESTAMP: {latest_ts.strftime('%Y-%m-%d %H:%M')}",
             delta_color="off",
         )
     with m2:
         st.metric(
-            label="Predicted 24h Mean",
+            label="PREDICTED 24H MEAN",
             value=f"{mean_forecast:.2f} kW",
-            delta=f"Span: {forecast_df['timestamp'].iloc[0].strftime('%H:%M')} - {forecast_df['timestamp'].iloc[-1].strftime('%H:%M')}",
+            delta=f"SPAN: {forecast_df['timestamp'].iloc[0].strftime('%H:%M')} - {forecast_df['timestamp'].iloc[-1].strftime('%H:%M')}",
             delta_color="off",
         )
     with m3:
         st.metric(
-            label="Predicted Peak Load",
+            label="PREDICTED PEAK LOAD",
             value=f"{peak_val:.2f} kW",
-            delta=f"Peak at {peak_time.strftime('%b %d, %H:%M')}",
+            delta=f"PEAK AT: {peak_time.strftime('%Y-%m-%d %H:%M')}",
             delta_color="inverse",
         )
     with m4:
         st.metric(
-            label="Random Forest Accuracy",
+            label="RANDOM FOREST ACCURACY",
             value=f"MAE: {rf_mae:.3f} kW",
-            delta=f"RMSE: {rf_rmse:.3f} kW (Best Model)",
+            delta=f"RMSE: {rf_rmse:.3f} kW (OPTIMAL)",
             delta_color="normal",
         )
 
     st.markdown("<br/>", unsafe_allow_html=True)
 
-    # Prominent Plotly chart: Last 7 days (168h) of actuals + 24h forecast
+    # Plotly Chart: Last 7 days (168h) actuals + 24h forecast
     recent_history = series.iloc[-168:] if len(series) >= 168 else series
 
     fig = go.Figure()
 
-    # Historical line (Teal)
+    # Historical Line (Teal)
     fig.add_trace(
         go.Scatter(
             x=recent_history.index,
             y=recent_history.values,
             mode="lines",
-            name="Recorded Demand (Past 7 Days)",
-            line=dict(color="#14B8A6", width=2.2),
+            name="HISTORICAL ACTUALS (PAST 7 DAYS)",
+            line=dict(color="#14B8A6", width=2.0),
             hovertemplate="%{x|%Y-%m-%d %H:%M}<br><b>Actual:</b> %{y:.2f} kW<extra></extra>",
         )
     )
 
-    # Forecast line (Lime dashed)
-    # Connect last historical point to first forecast point for seamless continuity
+    # Forecast Line (Lime dashed)
     bridge_x = [recent_history.index[-1]] + list(forecast_df["timestamp"])
     bridge_y = [recent_history.iloc[-1]] + list(forecast_df["forecast_kw"])
 
@@ -304,36 +376,48 @@ def render_overview(series: pd.Series, forecast_df: pd.DataFrame, eval_res: Dict
             x=bridge_x,
             y=bridge_y,
             mode="lines+markers",
-            name="24-Hour Forecast (Recursive RF)",
-            line=dict(color="#A3E635", width=2.5, dash="dash"),
-            marker=dict(size=6, color="#A3E635"),
+            name="24H RECURSIVE FORECAST (RF)",
+            line=dict(color="#A3E635", width=2.2, dash="dash"),
+            marker=dict(size=5, color="#A3E635"),
             hovertemplate="%{x|%Y-%m-%d %H:%M}<br><b>Forecast:</b> %{y:.2f} kW<extra></extra>",
         )
     )
 
     fig.update_layout(
-        title="7-Day Historical Demand Profile & Upcoming 24-Hour Forecast",
-        xaxis_title="Timeline",
-        yaxis_title="Hourly Average Power (kW)",
+        title=dict(
+            text="HISTORICAL PROFILE (7 DAYS) & PREDICTED TRAJECTORY (24 HOURS)",
+            font=dict(family="Rajdhani, sans-serif", size=15, color="#E4E4E7"),
+        ),
+        xaxis=dict(
+            title="TIMELINE",
+            gridcolor="rgba(255, 255, 255, 0.04)",
+            linecolor="#1E232B",
+        ),
+        yaxis=dict(
+            title="HOURLY AVERAGE POWER (kW)",
+            gridcolor="rgba(255, 255, 255, 0.04)",
+            linecolor="#1E232B",
+        ),
         template="plotly_dark",
-        paper_bgcolor="#18221E",
-        plot_bgcolor="#18221E",
+        paper_bgcolor="#0E1217",
+        plot_bgcolor="#090B0E",
+        font=dict(family="Rajdhani, Inter, sans-serif"),
         hovermode="x unified",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        margin=dict(l=40, r=40, t=60, b=40),
-        height=450,
+        margin=dict(l=40, r=40, t=55, b=40),
+        height=440,
     )
     st.plotly_chart(fig, use_container_width=True)
 
-    # Data-driven insight card
+    # Telemetry Insight Card
     st.markdown(
         f"""
-        <div class='wattwise-card'>
-            <div style='display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;'>
-                <span class='wattwise-badge'><span style='display:inline-block; width:6px; height:6px; border-radius:50%; background:#14B8A6; box-shadow:0 0 6px #14B8A6;'></span> OPERATIONAL DEMAND INSIGHT</span>
-                <span style='color: #64748B; font-size: 0.8rem; font-weight: 500;'>Real-time statistical synthesis</span>
+        <div class='telemetry-card telemetry-card-accent'>
+            <div style='display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;'>
+                <span class='telemetry-pill'>DIURNAL LOAD SYNTHESIS</span>
+                <span style='color: #71717A; font-family: JetBrains Mono, monospace; font-size: 0.75rem;'>REAL-TIME DATA CONVERGENCE</span>
             </div>
-            <span style='font-size: 1.05rem; line-height: 1.55; color: #F1F5F9; font-weight: 500;'>{obs[0]}</span>
+            <p style='font-size: 0.98rem; line-height: 1.5; color: #E4E4E7; margin: 0;'>{obs[0]}</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -341,12 +425,12 @@ def render_overview(series: pd.Series, forecast_df: pd.DataFrame, eval_res: Dict
 
 
 def render_forecast_tab(series: pd.Series, forecast_df: pd.DataFrame):
-    """Render Forecast tab with interactive timeline, inspection slider, and tabular breakdown."""
-    st.subheader("24-Hour Predictive Horizon")
-    st.markdown("Recursive multi-step electricity load forecasts generated using lag structures and shifted rolling windows.")
+    """Render Forecast tab with telemetry inspection and hourly matrix."""
+    st.subheader("PREDICTIVE HORIZON // 24-HOUR TRAJECTORY")
+    st.markdown("<p style='color: #71717A; margin-top: -8px;'>Multi-step recursive inference using historical lag structure and shifted rolling windows.</p>", unsafe_allow_html=True)
 
     history_span = st.selectbox(
-        "Historical Context Display Window:",
+        "HISTORICAL CONTEXT WINDOW:",
         ["Past 48 Hours", "Past 7 Days", "Past 14 Days"],
         index=1,
     )
@@ -359,7 +443,7 @@ def render_forecast_tab(series: pd.Series, forecast_df: pd.DataFrame):
             x=recent_history.index,
             y=recent_history.values,
             mode="lines",
-            name="Historical Actuals (kW)",
+            name="ACTUAL LOAD (kW)",
             line=dict(color="#14B8A6", width=2),
             hovertemplate="%{x|%Y-%m-%d %H:%M}<br>Actual: %{y:.3f} kW<extra></extra>",
         )
@@ -373,23 +457,27 @@ def render_forecast_tab(series: pd.Series, forecast_df: pd.DataFrame):
             x=bridge_x,
             y=bridge_y,
             mode="lines+markers",
-            name="Forecast Next 24h (kW)",
-            line=dict(color="#A3E635", width=2.5, dash="dash"),
+            name="PREDICTED LOAD (kW)",
+            line=dict(color="#A3E635", width=2.2, dash="dash"),
             marker=dict(size=5, color="#A3E635"),
             hovertemplate="%{x|%Y-%m-%d %H:%M}<br>Forecast: %{y:.3f} kW<extra></extra>",
         )
     )
 
     fig.update_layout(
-        title=f"Actual History ({history_span}) vs. 24-Hour Ahead Predictions",
-        xaxis_title="Timestamp",
-        yaxis_title="Hourly Average Power (kW)",
+        title=dict(
+            text=f"TELEMETRY COMPARISON: {history_span.upper()} VS. UPCOMING 24 HOURS",
+            font=dict(family="Rajdhani, sans-serif", size=15, color="#E4E4E7"),
+        ),
+        xaxis=dict(title="TIMESTAMP", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
+        yaxis=dict(title="HOURLY AVERAGE POWER (kW)", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
         template="plotly_dark",
-        paper_bgcolor="#18221E",
-        plot_bgcolor="#18221E",
+        paper_bgcolor="#0E1217",
+        plot_bgcolor="#090B0E",
+        font=dict(family="Rajdhani, Inter, sans-serif"),
         hovermode="x unified",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        margin=dict(l=40, r=40, t=60, b=40),
+        margin=dict(l=40, r=40, t=55, b=40),
         height=440,
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -397,23 +485,23 @@ def render_forecast_tab(series: pd.Series, forecast_df: pd.DataFrame):
     col1, col2 = st.columns([0.55, 0.45])
 
     with col1:
-        st.markdown("#### 🕒 Step-by-Step Hourly Forecast Table")
+        st.markdown("#### HOURLY FORECAST MATRIX (24-STEP)")
         display_df = forecast_df.copy()
-        display_df["Hour Ahead"] = [f"+{i+1}h" for i in range(len(display_df))]
+        display_df["Step"] = [f"+{i+1}h" for i in range(len(display_df))]
         display_df["Timestamp"] = display_df["timestamp"].dt.strftime("%Y-%m-%d %H:%M")
         display_df["Forecast Demand (kW)"] = display_df["forecast_kw"].round(3)
         st.dataframe(
-            display_df[["Hour Ahead", "Timestamp", "Forecast Demand (kW)"]],
+            display_df[["Step", "Timestamp", "Forecast Demand (kW)"]],
             hide_index=True,
             use_container_width=True,
             height=380,
         )
 
     with col2:
-        st.markdown("#### 🔍 Timestamp Inspector")
-        st.markdown("Select any specific hour in the forecast horizon to inspect its predicted load:")
+        st.markdown("#### TARGET HOUR TELEMETRY INSPECTOR")
+        st.markdown("<p style='color: #71717A; margin-top: -8px;'>Isolate and inspect point predictions along the forecast timeline:</p>", unsafe_allow_html=True)
         ts_options = [ts.strftime("%Y-%m-%d %H:%M") for ts in forecast_df["timestamp"]]
-        selected_label = st.select_slider("Choose Target Hour:", options=ts_options, value=ts_options[0])
+        selected_label = st.select_slider("TARGET HOUR:", options=ts_options, value=ts_options[0])
 
         sel_idx = ts_options.index(selected_label)
         selected_kw = float(forecast_df["forecast_kw"].iloc[sel_idx])
@@ -421,37 +509,42 @@ def render_forecast_tab(series: pd.Series, forecast_df: pd.DataFrame):
         delta_to_mean = selected_kw - float(forecast_df["forecast_kw"].mean())
 
         st.metric(
-            label=f"Predicted Load for {selected_label}",
+            label=f"PROJECTED LOAD // {selected_label}",
             value=f"{selected_kw:.3f} kW",
-            delta=f"{delta_to_mean:+.3f} kW vs 24h Mean ({forecast_df['forecast_kw'].mean():.2f} kW)",
+            delta=f"{delta_to_mean:+.3f} kW VS 24H MEAN ({forecast_df['forecast_kw'].mean():.2f} kW)",
             delta_color="normal" if delta_to_mean <= 0 else "inverse",
         )
 
-        st.info(
-            f"**Inspection Details:**\n"
-            f"- **Day of Week:** {selected_dt.strftime('%A')}\n"
-            f"- **Hour of Day:** {selected_dt.strftime('%H:00')}\n"
-            f"- **Horizon Step:** +{sel_idx + 1} hours from current observation"
+        st.markdown(
+            f"""
+            <div class='telemetry-card' style='margin-top: 14px;'>
+                <div style='font-family: JetBrains Mono, monospace; font-size: 0.85rem; line-height: 1.8; color: #A1A1AA;'>
+                    <div>&bull; DAY OF WEEK: <span style='color: #FFFFFF;'>{selected_dt.strftime('%A').upper()}</span></div>
+                    <div>&bull; HOUR OF DAY: <span style='color: #FFFFFF;'>{selected_dt.strftime('%H:00')}</span></div>
+                    <div>&bull; HORIZON OFFSET: <span style='color: #14B8A6;'>+{sel_idx + 1} HOURS FORWARD</span></div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
 
 
 def render_peakwatch_tab(series: pd.Series, forecast_df: pd.DataFrame):
-    """Render PeakWatch tab with interactive threshold slider, violation highlights, and alerts."""
-    st.subheader("PeakWatch: Demand Threshold Monitoring & Alerts")
-    st.markdown("Identify impending capacity stress and configure operational load thresholds.")
+    """Render PeakWatch tab with interactive threshold monitoring and alerts."""
+    st.subheader("PEAKWATCH // GRID CAPACITY MONITORING")
+    st.markdown("<p style='color: #71717A; margin-top: -8px;'>Automated threshold detection and distribution capacity alerts.</p>", unsafe_allow_html=True)
 
-    # Threshold defaults to 90th percentile of historical demand
     hist_p90 = float(np.percentile(series, 90))
     hist_p50 = float(np.percentile(series, 50))
     hist_max = float(series.max())
 
     threshold = st.slider(
-        "Set Operational Peak Threshold (kW):",
+        "OPERATIONAL PEAK THRESHOLD (kW):",
         min_value=round(hist_p50, 2),
         max_value=round(hist_max, 2),
         value=round(hist_p90, 2),
         step=0.05,
-        help="Hours with predicted demand exceeding this value are flagged as potential peak events.",
+        help="Hours with predicted load exceeding this value trigger alert states.",
     )
 
     summary = peak_summary(forecast_df, threshold)
@@ -459,49 +552,47 @@ def render_peakwatch_tab(series: pd.Series, forecast_df: pd.DataFrame):
     c1, c2, c3 = st.columns(3)
     with c1:
         if summary["has_violations"]:
-            st.error(f"🚨 **{summary['status']}**")
+            st.error(f"**CRITICAL THRESHOLD ALERT** | {summary['status']}")
         else:
-            st.success(f"✅ **{summary['status']}**")
+            st.success(f"**STATUS NOMINAL** | {summary['status']}")
     with c2:
         st.metric(
-            label="Configured Threshold",
+            label="CONFIGURED THRESHOLD",
             value=f"{threshold:.2f} kW",
-            delta=f"90th Percentile: {hist_p90:.2f} kW",
+            delta=f"90TH PERCENTILE: {hist_p90:.2f} kW",
             delta_color="off",
         )
     with c3:
         st.metric(
-            label="Forecast Maximum Load",
+            label="FORECAST MAXIMUM LOAD",
             value=f"{summary['peak_kw']:.2f} kW",
-            delta=f"At {summary['peak_time'].strftime('%b %d, %H:%M')}",
+            delta=f"AT {summary['peak_time'].strftime('%Y-%m-%d %H:%M')}",
             delta_color="inverse",
         )
 
-    # Chart highlighting threshold line and exceeding points
+    # Plotly Chart with Threshold and Exceedance Markers
     fig = go.Figure()
 
-    # Forecast curve
     fig.add_trace(
         go.Scatter(
             x=forecast_df["timestamp"],
             y=forecast_df["forecast_kw"],
             mode="lines",
-            name="24h Forecast Load (kW)",
+            name="FORECAST DEMAND (kW)",
             line=dict(color="#14B8A6", width=2.5),
             hovertemplate="%{x|%Y-%m-%d %H:%M}<br>Demand: %{y:.3f} kW<extra></extra>",
         )
     )
 
-    # Threshold horizontal reference line
     fig.add_hline(
         y=threshold,
         line_dash="dot",
         line_color="#F87171",
-        annotation_text=f"Threshold ({threshold:.2f} kW)",
+        annotation_text=f"THRESHOLD ({threshold:.2f} kW)",
         annotation_position="top right",
+        annotation_font=dict(family="Rajdhani, sans-serif", color="#F87171"),
     )
 
-    # Exceeding violation markers (if any)
     if summary["has_violations"]:
         ex_df = summary["exceeding_df"]
         fig.add_trace(
@@ -509,26 +600,30 @@ def render_peakwatch_tab(series: pd.Series, forecast_df: pd.DataFrame):
                 x=ex_df["timestamp"],
                 y=ex_df["forecast_kw"],
                 mode="markers",
-                name="Threshold Exceeded",
-                marker=dict(color="#EF4444", size=11, symbol="circle"),
-                hovertemplate="<b>VIOLATION</b><br>%{x|%Y-%m-%d %H:%M}<br>Exceeding Load: %{y:.3f} kW<extra></extra>",
+                name="THRESHOLD EXCEEDED",
+                marker=dict(color="#EF4444", size=10, symbol="circle"),
+                hovertemplate="<b>EXCEEDANCE</b><br>%{x|%Y-%m-%d %H:%M}<br>Peak Load: %{y:.3f} kW<extra></extra>",
             )
         )
 
     fig.update_layout(
-        title="24-Hour Forecast vs. Operational Peak Threshold",
-        xaxis_title="Forecast Timestamp",
-        yaxis_title="Hourly Average Power (kW)",
+        title=dict(
+            text="24-HOUR LOAD TRAJECTORY VS. OPERATIONAL THRESHOLD",
+            font=dict(family="Rajdhani, sans-serif", size=15, color="#E4E4E7"),
+        ),
+        xaxis=dict(title="TIMESTAMP", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
+        yaxis=dict(title="HOURLY AVERAGE POWER (kW)", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
         template="plotly_dark",
-        paper_bgcolor="#18221E",
-        plot_bgcolor="#18221E",
+        paper_bgcolor="#0E1217",
+        plot_bgcolor="#090B0E",
+        font=dict(family="Rajdhani, Inter, sans-serif"),
         margin=dict(l=40, r=40, t=50, b=40),
         height=400,
     )
     st.plotly_chart(fig, use_container_width=True)
 
     if summary["has_violations"]:
-        st.markdown("#### ⚠️ Exceeding Hours Detail")
+        st.markdown("#### CAPACITY EXCEEDANCE DETAIL")
         viol_display = summary["exceeding_df"].copy()
         viol_display["Timestamp"] = viol_display["timestamp"].dt.strftime("%Y-%m-%d %H:%M")
         viol_display["Predicted Load (kW)"] = viol_display["forecast_kw"].round(3)
@@ -539,25 +634,24 @@ def render_peakwatch_tab(series: pd.Series, forecast_df: pd.DataFrame):
             use_container_width=True,
         )
 
-    # Required operational disclaimer
-    st.caption("⚠️ **Operational Disclaimer:** Load predictions are statistical estimates derived from historical patterns; they are operational guidelines rather than guaranteed physical grid events.")
+    st.caption("**OPERATIONAL PROTOCOL:** Load predictions are statistical estimates derived from historical telemetry; they are operational guidelines rather than guaranteed physical grid events.")
 
 
 def render_model_arena_tab(eval_res: Dict[str, Any]):
-    """Render Model Arena tab comparing Seasonal Naive baseline vs. Random Forest on identical test timestamps."""
-    st.subheader("Model Arena: Rigorous Chronological Benchmark")
-    st.markdown("Both models are evaluated on the exact same chronological 20% test partition without shuffling or leakage.")
+    """Render Model Arena tab comparing Seasonal Naive baseline vs. Random Forest."""
+    st.subheader("MODEL ARENA // BENCHMARK VALIDATION")
+    st.markdown("<p style='color: #71717A; margin-top: -8px;'>Empirical validation on chronological 20% holdout partition (no shuffling, zero leakage).</p>", unsafe_allow_html=True)
 
     base_m = eval_res["baseline_metrics"]
     rf_m = eval_res["rf_metrics"]
 
-    # Best model banner
+    # Best Model Banner
     st.success(
-        f"🏆 **Champion Model by RMSE: {eval_res['best_model']}** — "
-        f"Random Forest reduced RMSE to **{rf_m['RMSE']:.4f} kW** versus **{base_m['RMSE']:.4f} kW** on the baseline."
+        f"**OPTIMAL ARCHITECTURE: {eval_res['best_model'].upper()}** -- "
+        f"Random Forest reduced RMSE to **{rf_m['RMSE']:.4f} kW** versus **{base_m['RMSE']:.4f} kW** on baseline."
     )
 
-    # Metrics comparison table
+    # Metrics Matrix Table
     comp_df = pd.DataFrame({
         "Model Architecture": [
             "Baseline: Seasonal Naive (24h Persistence)",
@@ -568,13 +662,13 @@ def render_model_arena_tab(eval_res: Dict[str, Any]):
         "MAPE (%)": [f"{base_m['MAPE']:.2f}%", f"{rf_m['MAPE']:.2f}%"],
     })
 
-    st.markdown("#### 📊 Evaluation Metrics Table")
+    st.markdown("#### EMPIRICAL BENCHMARK MATRIX")
     st.dataframe(comp_df, hide_index=True, use_container_width=True)
 
-    # Test set window selection
+    # Window Selection
     test_idx = eval_res["test_index"]
     window_choice = st.selectbox(
-        "Test Horizon Visual Window:",
+        "TEST EVALUATION WINDOW:",
         ["Last 3 Days of Test Set", "Last 7 Days of Test Set", "Last 14 Days of Test Set"],
         index=1,
     )
@@ -592,7 +686,7 @@ def render_model_arena_tab(eval_res: Dict[str, Any]):
             x=w_idx,
             y=w_actual,
             mode="lines",
-            name="Ground Truth (Actual kW)",
+            name="GROUND TRUTH ACTUAL (kW)",
             line=dict(color="#94A3B8", width=2),
             hovertemplate="%{x|%Y-%m-%d %H:%M}<br>Actual: %{y:.2f} kW<extra></extra>",
         )
@@ -602,7 +696,7 @@ def render_model_arena_tab(eval_res: Dict[str, Any]):
             x=w_idx,
             y=w_base,
             mode="lines",
-            name="Seasonal Naive Baseline (t-24h)",
+            name="BASELINE (t-24h)",
             line=dict(color="#F59E0B", width=1.8, dash="dot"),
             hovertemplate="%{x|%Y-%m-%d %H:%M}<br>Baseline: %{y:.2f} kW<extra></extra>",
         )
@@ -612,22 +706,26 @@ def render_model_arena_tab(eval_res: Dict[str, Any]):
             x=w_idx,
             y=w_rf,
             mode="lines",
-            name="Random Forest Forecaster",
+            name="RANDOM FOREST",
             line=dict(color="#14B8A6", width=2.2),
             hovertemplate="%{x|%Y-%m-%d %H:%M}<br>RF: %{y:.2f} kW<extra></extra>",
         )
     )
 
     fig.update_layout(
-        title=f"Test Set Comparison: Actual vs. Baseline vs. Random Forest ({window_choice})",
-        xaxis_title="Test Partition Timestamp",
-        yaxis_title="Hourly Average Power (kW)",
+        title=dict(
+            text=f"HOLDOUT TEST TRAJECTORY: ACTUAL VS. BASELINE VS. RANDOM FOREST ({window_choice.upper()})",
+            font=dict(family="Rajdhani, sans-serif", size=15, color="#E4E4E7"),
+        ),
+        xaxis=dict(title="TIMESTAMP", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
+        yaxis=dict(title="HOURLY AVERAGE POWER (kW)", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
         template="plotly_dark",
-        paper_bgcolor="#18221E",
-        plot_bgcolor="#18221E",
+        paper_bgcolor="#0E1217",
+        plot_bgcolor="#090B0E",
+        font=dict(family="Rajdhani, Inter, sans-serif"),
         hovermode="x unified",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        margin=dict(l=40, r=40, t=60, b=40),
+        margin=dict(l=40, r=40, t=55, b=40),
         height=420,
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -656,11 +754,16 @@ def render_model_arena_tab(eval_res: Dict[str, Any]):
     )
     err_fig.update_layout(
         barmode="group",
-        title="Model Error Comparison (Lower is Superior)",
-        yaxis_title="Error (kW)",
+        title=dict(
+            text="MODEL ERROR BENCHMARK (LOWER REPRESENTS SUPERIOR GENERALIZATION)",
+            font=dict(family="Rajdhani, sans-serif", size=14, color="#E4E4E7"),
+        ),
+        yaxis=dict(title="ERROR (kW)", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
+        xaxis=dict(linecolor="#1E232B"),
         template="plotly_dark",
-        paper_bgcolor="#18221E",
-        plot_bgcolor="#18221E",
+        paper_bgcolor="#0E1217",
+        plot_bgcolor="#090B0E",
+        font=dict(family="Rajdhani, Inter, sans-serif"),
         height=320,
         margin=dict(l=40, r=40, t=50, b=30),
     )
@@ -668,11 +771,10 @@ def render_model_arena_tab(eval_res: Dict[str, Any]):
 
 
 def render_pattern_lens_tab(hp: pd.Series, wp: pd.Series, top_h: pd.DataFrame, obs: list):
-    """Render Pattern Lens tab with diurnal profiles, weekly cycles, top hours, and observations."""
-    st.subheader("Pattern Lens: Time-Series Dynamics & Behavioral Signatures")
-    st.markdown("Understand demand rhythms across daily hours and weekly cycles.")
+    """Render Pattern Lens tab with diurnal profiles and telemetry analytics."""
+    st.subheader("PATTERN LENS // BEHAVIORAL LOAD DYNAMICS")
+    st.markdown("<p style='color: #71717A; margin-top: -8px;'>Diurnal cycles, weekly rhythms, and temporal demand characteristics.</p>", unsafe_allow_html=True)
 
-    # Hourly Profile Chart
     col1, col2 = st.columns([0.6, 0.4])
 
     with col1:
@@ -686,12 +788,16 @@ def render_pattern_lens_tab(hp: pd.Series, wp: pd.Series, top_h: pd.DataFrame, o
             )
         )
         h_fig.update_layout(
-            title="Diurnal Demand Profile: Average kW by Hour of Day",
-            xaxis_title="Hour of Day",
-            yaxis_title="Hourly Average Power (kW)",
+            title=dict(
+                text="DIURNAL LOAD PROFILE (HOURLY AVERAGE kW)",
+                font=dict(family="Rajdhani, sans-serif", size=14, color="#E4E4E7"),
+            ),
+            xaxis=dict(title="HOUR OF DAY", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
+            yaxis=dict(title="HOURLY AVERAGE POWER (kW)", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
             template="plotly_dark",
-            paper_bgcolor="#18221E",
-            plot_bgcolor="#18221E",
+            paper_bgcolor="#0E1217",
+            plot_bgcolor="#090B0E",
+            font=dict(family="Rajdhani, Inter, sans-serif"),
             margin=dict(l=40, r=40, t=50, b=40),
             height=340,
         )
@@ -708,22 +814,25 @@ def render_pattern_lens_tab(hp: pd.Series, wp: pd.Series, top_h: pd.DataFrame, o
             )
         )
         w_fig.update_layout(
-            title="Weekly Rhythm: Average kW by Day of Week",
-            xaxis_title="Day of Week",
-            yaxis_title="Hourly Average Power (kW)",
+            title=dict(
+                text="WEEKLY RHYTHM (DAY OF WEEK AVERAGE kW)",
+                font=dict(family="Rajdhani, sans-serif", size=14, color="#E4E4E7"),
+            ),
+            xaxis=dict(title="DAY OF WEEK", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
+            yaxis=dict(title="HOURLY AVERAGE POWER (kW)", gridcolor="rgba(255, 255, 255, 0.04)", linecolor="#1E232B"),
             template="plotly_dark",
-            paper_bgcolor="#18221E",
-            plot_bgcolor="#18221E",
+            paper_bgcolor="#0E1217",
+            plot_bgcolor="#090B0E",
+            font=dict(family="Rajdhani, Inter, sans-serif"),
             margin=dict(l=40, r=40, t=50, b=40),
             height=340,
         )
         st.plotly_chart(w_fig, use_container_width=True)
 
-    # Top Hours & Data-driven observations
     col3, col4 = st.columns([0.4, 0.6])
 
     with col3:
-        st.markdown("#### 🔝 Peak Demand Hours")
+        st.markdown("#### HISTORICAL PEAK DISTRIBUTION")
         top_display = top_h.copy()
         top_display["Hour"] = [f"{int(h):02d}:00" for h in top_display["hour"]]
         top_display["Avg Demand (kW)"] = top_display["avg_kw"].round(3)
@@ -734,15 +843,15 @@ def render_pattern_lens_tab(hp: pd.Series, wp: pd.Series, top_h: pd.DataFrame, o
         )
 
     with col4:
-        st.markdown("#### 📋 Data-Driven Takeaways")
+        st.markdown("#### ANALYTIC LOAD SYNTHESIS")
         for i, observation in enumerate(obs, 1):
             st.markdown(
                 f"""
-                <div class='wattwise-card'>
-                    <div style='display: flex; align-items: center; gap: 8px; margin-bottom: 6px;'>
-                        <span class='wattwise-badge-lime'>TAKEAWAY #{i}</span>
+                <div class='telemetry-card telemetry-card-accent'>
+                    <div style='display: flex; align-items: center; gap: 8px; margin-bottom: 4px;'>
+                        <span class='telemetry-pill'>OBSERVATION #{i}</span>
                     </div>
-                    <span style='font-size: 0.96rem; line-height: 1.5; color: #E2E8F0;'>{observation}</span>
+                    <p style='font-size: 0.95rem; line-height: 1.45; color: #E4E4E7; margin: 0;'>{observation}</p>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -751,12 +860,17 @@ def render_pattern_lens_tab(hp: pd.Series, wp: pd.Series, top_h: pd.DataFrame, o
 
 def main():
     # Sidebar setup
-    st.sidebar.title("⚡ WATTWISE")
+    st.sidebar.markdown(
+        "<h2 style='color: #FFFFFF; font-family: Rajdhani, sans-serif; letter-spacing: 0.08em; margin-bottom: 0;'>WATTWISE</h2>"
+        "<p style='color: #71717A; font-family: Rajdhani, sans-serif; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;'>TELEMETRY FORECASTER</p>",
+        unsafe_allow_html=True,
+    )
+
     data_source_mode = st.sidebar.selectbox(
-        "Data Source Mode:",
+        "DATA SOURCE MODE:",
         ["Auto (UCI Dataset / Fallback)", "Upload Custom CSV / TXT", "Synthetic Demo"],
         index=0,
-        help="Select real data, custom file, or synthetic demonstration data.",
+        help="Select telemetry source: primary dataset, custom upload, or benchmark.",
     )
 
     series = None
@@ -775,58 +889,59 @@ def main():
                 help="File must contain Date + Time or datetime, plus Global_active_power.",
             )
             if uploaded_file is None:
-                st.info("📂 **Please upload a dataset file in the sidebar to proceed.**\n\nExpected columns: `Date` and `Time` (or `datetime`) and `Global_active_power`.")
+                st.info("**FILE REQUIRED:** Please upload a dataset file in the sidebar to proceed. Expected columns: `Date` and `Time` (or `datetime`) and `Global_active_power`.")
                 return
-            
-            # Read uploaded file buffer
+
             if uploaded_file.size == 0:
-                st.error("❌ **Invalid Dataset:** The uploaded file is completely empty (0 bytes).")
+                st.error("**DATASET INGESTION ERROR:** The uploaded file is completely empty (0 bytes).")
                 return
 
             try:
-                # Save uploaded file temporarily to process through load_raw
                 temp_upload_path = Path("data") / f"temp_upload_{uploaded_file.name}"
                 temp_upload_path.write_bytes(uploaded_file.getbuffer())
                 raw_df = load_raw(temp_upload_path)
                 series = clean_and_resample(raw_df)
                 if temp_upload_path.exists():
                     temp_upload_path.unlink()
-                
+
                 if series.empty:
-                    st.error("❌ **Invalid Dataset:** No valid non-negative readings found after cleaning and resampling.")
+                    st.error("**DATASET INGESTION ERROR:** No valid non-negative readings found after cleaning and resampling.")
                     return
                 source_label = f"Uploaded File: {uploaded_file.name}"
             except Exception as read_err:
-                st.error(f"❌ **Invalid Dataset Error:** {read_err}")
+                st.error(f"**DATASET INGESTION ERROR:** {read_err}")
                 return
 
     except Exception as exc:
-        st.error(
-            f"❌ **Failed to load WATTWISE dataset:** {exc}\n\n"
-            "Please check file format or select 'Synthetic Demo' from the sidebar."
-        )
+        st.error(f"**DATASET INGESTION ERROR:** Failed to load dataset: {exc}")
         return
 
-    st.sidebar.markdown(f"**Data Source:** `{source_label}`")
+    st.sidebar.markdown(
+        f"<div style='margin-top: -6px; margin-bottom: 12px; font-family: JetBrains Mono, monospace; font-size: 0.78rem; color: #71717A;'>"
+        f"SOURCE: <span style='color: #14B8A6;'>{source_label}</span>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
 
-    # Synthetic Demo Mode Warning on every page if running in fallback mode
     if source_label == "SYNTHETIC DEMO":
-        st.sidebar.warning("⚠️ Running in SYNTHETIC DEMO mode.")
-        st.warning("⚠️ **Notice:** WATTWISE is running in **SYNTHETIC DEMO** mode. Real UCI dataset was not found; displaying synthetic benchmark data.")
+        st.sidebar.warning("**SYSTEM NOTICE:** Running in SYNTHETIC DEMO mode.")
+        st.warning("**SYSTEM NOTICE:** WATTWISE is running in **SYNTHETIC DEMO** mode. Real UCI dataset was not detected in 'data/'. Displaying synthetic benchmark telemetry.")
 
     nav_page = st.sidebar.radio(
-        "Navigation Menu:",
+        "TELEMETRY CONSOLE:",
         ["Overview", "Forecast", "PeakWatch", "Model Arena", "Pattern Lens"],
         index=0,
     )
 
     st.sidebar.divider()
-    st.sidebar.info(
-        "**College Mini-Project**\n"
-        "Electricity Demand Forecasting\n"
-        "Model: Random Forest Regressor\n"
-        "Evaluation: Strict Chronological Split\n"
-        "Zero Data Leakage Enforced"
+    st.sidebar.markdown(
+        "<div style='font-family: Rajdhani, sans-serif; font-size: 0.85rem; color: #71717A; line-height: 1.6;'>"
+        "<b style='color: #E4E4E7;'>COLLEGE MINI-PROJECT</b><br/>"
+        "Model: Random Forest (200 Trees)<br/>"
+        "Partition: Chronological Split<br/>"
+        "Integrity: Zero Data Leakage"
+        "</div>",
+        unsafe_allow_html=True,
     )
 
     render_header(source_label)
@@ -837,7 +952,7 @@ def main():
         forecast_df = get_cached_forecast(eval_res["model"], series)
         hp, wp, top_h, obs = get_cached_insights(series)
     except Exception as exc:
-        st.error(f"❌ **An error occurred during model evaluation or inference:** {exc}")
+        st.error(f"**MODEL INFERENCE ERROR:** {exc}")
         return
 
     # Route navigation
