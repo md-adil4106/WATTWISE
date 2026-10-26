@@ -39,64 +39,132 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Custom CSS for Dark Charcoal (#0F1412), Teal (#14B8A6), and Lime (#A3E635) styling
+# Custom CSS for Modern Glassmorphism, Dark Charcoal (#0F1412), Teal (#14B8A6), and Lime (#A3E635) styling
 st.markdown(
     """
     <style>
-    /* Global font & background enhancements */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    /* Global application canvas */
     .stApp {
-        background-color: #0F1412;
+        background: radial-gradient(circle at 12% 10%, #151f1a 0%, #0F1412 50%, #090e0c 100%);
         color: #F3F4F6;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
-    /* Card containers */
+    /* Glassmorphic Metric Cards */
     div[data-testid="stMetric"], div.css-1r6slb0, div.css-12w0qpk {
-        background: #18221E;
-        border: 1px solid rgba(20, 184, 166, 0.25);
-        border-radius: 10px;
-        padding: 14px 18px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        background: rgba(24, 34, 30, 0.72) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        border: 1px solid rgba(20, 184, 166, 0.28) !important;
+        border-radius: 14px !important;
+        padding: 16px 20px !important;
+        box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.05) !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    div[data-testid="stMetric"]:hover {
+        transform: translateY(-2px);
+        border-color: rgba(20, 184, 166, 0.55) !important;
+        box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6), 0 0 16px 0 rgba(20, 184, 166, 0.2) !important;
     }
     
     /* Metric typography */
     div[data-testid="stMetricValue"] > div {
         color: #14B8A6 !important;
-        font-weight: 700 !important;
-        font-size: 1.85rem !important;
+        font-weight: 800 !important;
+        font-size: 2.0rem !important;
+        font-feature-settings: "tnum";
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.025em;
+        text-shadow: 0 0 20px rgba(20, 184, 166, 0.35);
     }
     
     div[data-testid="stMetricLabel"] > div {
-        color: #9CA3AF !important;
-        font-size: 0.9rem !important;
+        color: #94A3B8 !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.08em;
     }
     
-    /* Custom callout boxes */
+    div[data-testid="stMetricDelta"] {
+        font-size: 0.84rem !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Frosted glass callout containers */
     .wattwise-card {
-        background-color: #18221E;
-        border: 1px solid rgba(20, 184, 166, 0.3);
-        border-radius: 10px;
-        padding: 16px 20px;
-        margin-bottom: 16px;
+        background: rgba(24, 34, 30, 0.72) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        border: 1px solid rgba(20, 184, 166, 0.28) !important;
+        border-radius: 14px !important;
+        padding: 18px 24px !important;
+        margin-bottom: 16px !important;
+        box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45) !important;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
     
+    .wattwise-card:hover {
+        border-color: rgba(20, 184, 166, 0.5) !important;
+        box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.55), 0 0 14px rgba(20, 184, 166, 0.12) !important;
+    }
+    
+    /* Refined pill badges with glowing accents */
     .wattwise-badge {
-        display: inline-block;
-        background: rgba(163, 230, 53, 0.15);
-        color: #A3E635;
-        border: 1px solid rgba(163, 230, 53, 0.35);
-        border-radius: 6px;
-        padding: 3px 8px;
-        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(20, 184, 166, 0.12);
+        color: #14B8A6;
+        border: 1px solid rgba(20, 184, 166, 0.35);
+        border-radius: 9999px;
+        padding: 4px 12px;
+        font-size: 0.78rem;
         font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
         margin-bottom: 8px;
     }
     
-    /* Sidebar styling */
+    .wattwise-badge-lime {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(163, 230, 53, 0.12);
+        color: #A3E635;
+        border: 1px solid rgba(163, 230, 53, 0.35);
+        border-radius: 9999px;
+        padding: 4px 12px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        box-shadow: 0 0 12px rgba(163, 230, 53, 0.15);
+    }
+    
+    /* Sidebar glassmorphic treatment */
     section[data-testid="stSidebar"] {
-        background-color: #131A17;
-        border-right: 1px solid rgba(20, 184, 166, 0.2);
+        background: linear-gradient(180deg, #131B17 0%, #0B110F 100%) !important;
+        border-right: 1px solid rgba(20, 184, 166, 0.18) !important;
+    }
+    
+    /* Modern radio item container */
+    div[data-testid="stRadio"] > div {
+        background: rgba(24, 34, 30, 0.4);
+        border-radius: 12px;
+        padding: 10px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Dataframes & tables styling */
+    div[data-testid="stDataFrame"] {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(20, 184, 166, 0.2);
     }
     </style>
     """,
@@ -150,8 +218,8 @@ def render_header(source_label: str):
         st.markdown(
             f"""
             <div style='text-align: right; padding-top: 10px;'>
-                <span class='wattwise-badge'>Active Source</span><br/>
-                <span style='color: #14B8A6; font-weight: 600;'>{source_label}</span>
+                <span class='wattwise-badge-lime'><span style='display:inline-block; width:6px; height:6px; border-radius:50%; background:#A3E635; box-shadow:0 0 6px #A3E635;'></span> ACTIVE TELEMETRY</span><br/>
+                <span style='color: #14B8A6; font-weight: 600; font-size: 0.95rem; letter-spacing: -0.01em;'>{source_label}</span>
             </div>
             """,
             unsafe_allow_html=True,
@@ -261,8 +329,11 @@ def render_overview(series: pd.Series, forecast_df: pd.DataFrame, eval_res: Dict
     st.markdown(
         f"""
         <div class='wattwise-card'>
-            <span class='wattwise-badge'>💡 Operational Demand Insight</span><br/>
-            <span style='font-size: 1.05rem; line-height: 1.5;'>{obs[0]}</span>
+            <div style='display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;'>
+                <span class='wattwise-badge'><span style='display:inline-block; width:6px; height:6px; border-radius:50%; background:#14B8A6; box-shadow:0 0 6px #14B8A6;'></span> OPERATIONAL DEMAND INSIGHT</span>
+                <span style='color: #64748B; font-size: 0.8rem; font-weight: 500;'>Real-time statistical synthesis</span>
+            </div>
+            <span style='font-size: 1.05rem; line-height: 1.55; color: #F1F5F9; font-weight: 500;'>{obs[0]}</span>
         </div>
         """,
         unsafe_allow_html=True,
@@ -668,8 +739,10 @@ def render_pattern_lens_tab(hp: pd.Series, wp: pd.Series, top_h: pd.DataFrame, o
             st.markdown(
                 f"""
                 <div class='wattwise-card'>
-                    <span class='wattwise-badge'>Observation #{i}</span><br/>
-                    <span style='font-size: 0.95rem; line-height: 1.4;'>{observation}</span>
+                    <div style='display: flex; align-items: center; gap: 8px; margin-bottom: 6px;'>
+                        <span class='wattwise-badge-lime'>TAKEAWAY #{i}</span>
+                    </div>
+                    <span style='font-size: 0.96rem; line-height: 1.5; color: #E2E8F0;'>{observation}</span>
                 </div>
                 """,
                 unsafe_allow_html=True,
