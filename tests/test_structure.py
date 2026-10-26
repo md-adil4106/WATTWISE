@@ -19,7 +19,7 @@ def test_modules_importable():
 
 def test_stubs_raise_not_implemented():
     """Verify that future phase stub functions raise NotImplementedError as expected before implementation."""
-    from src.features import create_calendar_features
+    from src.insights import compute_peak_hours
     import pandas as pd
     with pytest.raises(NotImplementedError):
-        create_calendar_features(pd.DataFrame())
+        compute_peak_hours(pd.DataFrame())

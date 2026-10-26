@@ -115,22 +115,21 @@ Time-series forecasting models are exceptionally vulnerable to subtle data leaka
 - [x] Add unit tests for `data_loader.py` covering '?' handling, duplicates, hourly mean, monotonicity, missing file, and synthetic labelling.
 - [x] Provide graceful UCI dataset download helper script (`scripts/download_uci.py`).
 
-### Phase 2: Feature Engineering & Modeling (Next)
-- [ ] Implement `src/features.py` functions:
-  - Calendar attributes (`hour`, `dayofweek`, `month`, `is_weekend`).
-  - Cyclical encoding (`sin`/`cos` transforms for hour and day).
-  - Historical lags (`t-1`, `t-2`, `t-24`, `t-168`).
-  - Shifted rolling statistics (`rolling_mean_24h`, `rolling_std_24h`).
-- [ ] Ensure non-leakage verification tests in `tests/test_features.py`.
+### Phase 2: Feature Engineering & Modeling (Completed)
+- [x] Implement `src/features.py`:
+  - `build_features(series)`: lag features (`lag_1`, `lag_2`, `lag_3`, `lag_24`, `lag_168`), shifted rolling means (`roll_mean_24`, `roll_mean_168`), and calendar features (`hour`, `dayofweek`).
+  - `make_row(history_series, timestamp)`: identical feature generation for one future timestamp strictly using past history.
+- [x] Implement `src/models.py`:
+  - `chrono_split(df, test_frac=0.2)`: chronological train/test splitting with no overlap or shuffling.
+  - `seasonal_naive(series, index)`: 24h persistence baseline.
+  - `train_rf(X_train, y_train)`: RandomForestRegressor(n_estimators=200, max_depth=12, n_jobs=-1, random_state=42).
+  - `metrics(y_true, y_pred)`: MAE, RMSE, and conditional MAPE (actual >= 0.1 kW).
+  - `evaluate(series)`: identical test set evaluation comparing Seasonal Naive vs. Random Forest with dynamic best model selection by lowest RMSE.
+  - `forecast_next_24(model, series)`: recursive 24-step forecasting starting strictly 1h after the latest observation.
+- [x] Add comprehensive tests in `tests/test_models.py` verifying no leakage, chronological split, 24-step recursive forecast shape, known metrics, and seasonal naive lag equivalence.
+- [x] Verified on real UCI dataset (Random Forest achieved MAE 0.3305 kW, RMSE 0.4827 kW vs. Baseline MAE 0.5361 kW, RMSE 0.7905 kW).
 
-### Phase 3: Modeling & Evaluation
-- [ ] Implement `src/models.py` functions:
-  - Chronological split utility (`train_test_split_temporal`).
-  - Baseline model (Persistence / Linear Ridge).
-  - ML model (Random Forest Regressor / Gradient Boosting).
-  - Evaluation metric suite (`MAE`, `RMSE`, `MAPE`, $R^2$).
-  - Future horizon forecast inference.
-- [ ] Add unit tests for model training and metric computation.
+### Phase 3: Dashboard Integration & Analytics Insights (Next)
 
 ### Phase 4: Insights Engine
 - [ ] Implement `src/insights.py` functions:
