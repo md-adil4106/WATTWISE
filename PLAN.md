@@ -103,16 +103,19 @@ Time-series forecasting models are exceptionally vulnerable to subtle data leaka
 - [x] Build minimal Streamlit `app.py`.
 - [x] Verify Streamlit launches in headless mode.
 
-### Phase 1: Data Ingestion & Preprocessing (Next)
-- [ ] Implement `src/data_loader.py` functions:
-  - Load sample electricity demand datasets (or synthetic hourly load benchmark).
+### Phase 1: Data Ingestion & Preprocessing (Completed)
+- [x] Implement `src/data_loader.py` functions:
+  - Load sample electricity demand datasets (UCI household power & compatible CSVs).
   - Robust timestamp parsing and sorting.
-  - Hourly resampling (`1h`) and power metric aggregation to kW.
-  - Forward-fill / linear interpolation for isolated gaps.
-  - Data integrity checks and summary report.
-- [ ] Add unit tests for `data_loader.py`.
+  - Hourly resampling (`1h`) and power metric aggregation to hourly mean kW.
+  - Time-based interpolation limited to 3 consecutive hours for small gaps.
+  - Synthetic benchmark generator with realistic diurnal/weekly/annual patterns.
+  - Graceful fallback with clear dataset labelling (`get_data`).
+  - Data summary and integrity validation.
+- [x] Add unit tests for `data_loader.py` covering '?' handling, duplicates, hourly mean, monotonicity, missing file, and synthetic labelling.
+- [x] Provide graceful UCI dataset download helper script (`scripts/download_uci.py`).
 
-### Phase 2: Feature Engineering
+### Phase 2: Feature Engineering & Modeling (Next)
 - [ ] Implement `src/features.py` functions:
   - Calendar attributes (`hour`, `dayofweek`, `month`, `is_weekend`).
   - Cyclical encoding (`sin`/`cos` transforms for hour and day).

@@ -63,11 +63,17 @@ pip install -r requirements.txt
 ```
 
 ### 4. Dataset Setup
-Download the [UCI Individual Household Electric Power Consumption dataset](https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption) and place the extracted file at:
+Download the [UCI Individual Household Electric Power Consumption dataset](https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption) (DOI: `10.24432/C58K54`, Repo ID: `235`) and place the extracted file at:
 ```
 data/household_power_consumption.txt
 ```
 *(Note: Raw dataset files are excluded from Git via `.gitignore` to prevent tracking large files).*
+
+Alternatively, an optional helper script is provided to attempt downloading the UCI archive automatically:
+```bash
+python scripts/download_uci.py
+```
+If network connectivity is unavailable or the download fails, the script fails gracefully and WATTWISE automatically runs in **SYNTHETIC DEMO** mode without crashing.
 
 ### 5. Run the Dashboard
 ```bash

@@ -18,7 +18,8 @@ def test_modules_importable():
 
 
 def test_stubs_raise_not_implemented():
-    """Verify that stub functions raise NotImplementedError as expected before implementation."""
-    from src.data_loader import load_raw_data
+    """Verify that future phase stub functions raise NotImplementedError as expected before implementation."""
+    from src.features import create_calendar_features
+    import pandas as pd
     with pytest.raises(NotImplementedError):
-        load_raw_data("dummy_path.csv")
+        create_calendar_features(pd.DataFrame())
