@@ -136,6 +136,12 @@ Or with verbose output:
 pytest -v
 ```
 
+### 6. Run CA3 Multi-Model Benchmark (Live Evaluation)
+```powershell
+python scripts/benchmark_models.py
+```
+Trains and benchmarks **Seasonal Naive Baseline, Random Forest, XGBoost, and LightGBM** on the held-out test partition in under 3 seconds.
+
 ---
 
 ## 🔬 Methodology
